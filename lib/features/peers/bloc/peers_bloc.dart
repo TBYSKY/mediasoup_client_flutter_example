@@ -5,9 +5,10 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:example/features/peers/enitity/peer.dart';
 import 'package:example/features/media_devices/bloc/media_devices_bloc.dart';
+import 'package:example/medsoup/src/consumer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:mediasoup_client_flutter/mediasoup_client_flutter.dart';
+
 
 part 'peers_event.dart';
 part 'peers_state.dart';

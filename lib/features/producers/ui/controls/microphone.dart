@@ -1,9 +1,10 @@
+import 'package:example/medsoup/src/producer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:example/features/media_devices/bloc/media_devices_bloc.dart';
 import 'package:example/features/signaling/room_client_repository.dart';
 import 'package:example/features/producers/bloc/producers_bloc.dart';
-import 'package:mediasoup_client_flutter/mediasoup_client_flutter.dart';
+
 
 class Microphone extends StatelessWidget {
   const Microphone({Key? key}) : super(key: key);

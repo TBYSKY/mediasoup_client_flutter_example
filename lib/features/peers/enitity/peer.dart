@@ -1,6 +1,6 @@
 import 'package:example/features/peers/enitity/peer_device.dart';
+import 'package:example/medsoup/src/consumer.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:mediasoup_client_flutter/mediasoup_client_flutter.dart';
 
 class Peer {
   final Consumer? audio;

@@ -6,9 +6,15 @@ import 'package:example/features/peers/bloc/peers_bloc.dart';
 import 'package:example/features/producers/bloc/producers_bloc.dart';
 import 'package:example/features/room/bloc/room_bloc.dart';
 import 'package:example/features/signaling/web_socket.dart';
+import 'package:example/medsoup/src/consumer.dart';
+import 'package:example/medsoup/src/device.dart';
+import 'package:example/medsoup/src/producer.dart';
+import 'package:example/medsoup/src/rtp_parameters.dart';
+import 'package:example/medsoup/src/scalability_modes.dart';
+import 'package:example/medsoup/src/transport.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:mediasoup_client_flutter/mediasoup_client_flutter.dart';
+
 
 class RoomClientRepository {
   final ProducersBloc producersBloc;

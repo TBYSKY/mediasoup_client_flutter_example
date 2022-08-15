@@ -1,3 +1,10 @@
+/*
+ * @Author: Beoyan
+ * @Date: 2022-08-12 15:14:44
+ * @LastEditTime: 2022-08-12 16:09:49
+ * @LastEditors: Beoyan
+ * @Description: r
+ */
 part of '../../../features/producers/bloc/producers_bloc.dart';
 
 abstract class ProducersEvent extends Equatable {
@@ -16,7 +23,7 @@ class ProducerAdd extends ProducersEvent {
 class ProducerRemove extends ProducersEvent {
   final String source;
 
-  const ProducerRemove({required  this.source});
+  const ProducerRemove({required this.source});
 
   @override
   List<Object> get props => [source];
@@ -25,7 +32,7 @@ class ProducerRemove extends ProducersEvent {
 class ProducerPaused extends ProducersEvent {
   final String source;
 
-  const ProducerPaused({required  this.source});
+  const ProducerPaused({required this.source});
 
   @override
   List<Object> get props => [source];

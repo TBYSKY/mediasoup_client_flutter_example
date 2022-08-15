@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:mediasoup_client_flutter/mediasoup_client_flutter.dart';
+import 'package:example/medsoup/src/producer.dart';
+
 
 part 'producers_event.dart';
 part 'producers_state.dart';

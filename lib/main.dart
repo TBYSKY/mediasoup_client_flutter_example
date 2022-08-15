@@ -67,13 +67,15 @@ class MyApp extends StatelessWidget {
 
                     return RoomClientRepository(
                       peerId: id,
-                      displayName: displayName,
-                      url: url.isEmpty
-                          ? 'wss://${uri.host}:4443'
-                          : 'wss://v3demo.mediasoup.org:4443',
-                      roomId: uri.queryParameters['roomId'] ??
-                          uri.queryParameters['roomid'] ??
-                          randomAlpha(8).toLowerCase(),
+                      displayName: '测试',
+                      // url: url.isEmpty
+                      //     ? 'wss://${uri.host}:4443'
+                      //     : 'wss://v3demo.mediasoup.org:4443',
+                      url: 'wss://192.168.0.228:4443',
+                      roomId: 'haoxin',
+                      // roomId: uri.queryParameters['roomId'] ??
+                      //     uri.queryParameters['roomid'] ??
+                      //     randomAlpha(8).toLowerCase(),、
                       peersBloc: context.read<PeersBloc>(),
                       producersBloc: context.read<ProducersBloc>(),
                       meBloc: context.read<MeBloc>(),
