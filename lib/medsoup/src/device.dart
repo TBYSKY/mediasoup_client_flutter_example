@@ -7,7 +7,6 @@ import 'package:example/medsoup/src/sctp_parameters.dart';
 import 'package:example/medsoup/src/transport.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-
 Logger _logger = Logger('Device');
 
 class Device {
@@ -344,7 +343,7 @@ class Device {
         ]
       }),
       additionalSettings: {
-        'encodedInsertableStreams': false,
+        'encodedInsertableStreams': false,//管道化
       },
       consumerCallback: consumerCallback,
       dataConsumerCallback: dataConsumerCallback,

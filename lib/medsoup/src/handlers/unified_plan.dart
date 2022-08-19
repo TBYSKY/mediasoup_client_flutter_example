@@ -104,13 +104,13 @@ class UnifiedPlan extends HandlerInterface {
 
     RTCPeerConnection pc = await createPeerConnection({
       'iceServers': [],
-      'iceTransportPolicy': 'all', //ICE连接过程 可以指定 relay  prflx srflx host
+      'iceTransportPolicy': 'all', //ICE连接过程 可以指定 relay  prflx srflx host all
       'bundlePolicy':
           'max-bundle', //可以指定 balanced 视频走一个通道音频一个通道  max-bundle 所有媒体走一个通道
       //max-compat 为每一个Candidate 对应一个tack 一个媒体流一个通道
       'rtcpMuxPolicy': 'require',
       'sdpSemantics': 'unified-plan',
-      // 'iceCandidatePoolSize': '0', //如果大于0 会预先生成Candidate
+      'iceCandidatePoolSize': '0', //如果大于0 会预先生成Candidate
     }, {
       'optional': [
         {'DtlsSrtpKeyAgreement': true},
@@ -119,7 +119,7 @@ class UnifiedPlan extends HandlerInterface {
 
     try {
       await pc.addTransceiver(kind: RTCRtpMediaType.RTCRtpMediaTypeAudio);
-
+      await pc.addTransceiver(kind: RTCRtpMediaType.RTCRtpMediaTypeVideo);
       RTCSessionDescription offer = await pc.createOffer({});
       final parsedOffer = parse(offer.sdp!);
       SdpObject sdpObject = SdpObject.fromMap(parsedOffer);
@@ -562,7 +562,7 @@ class UnifiedPlan extends HandlerInterface {
     }
 
     // Speacial case for VP9 with SVC.
-    bool hackVp9Svc = false;
+    bool hackVp9Svc = true;
 
     ScalabilityMode layers = ScalabilityMode.parse((options.encodings.isNotEmpty
             ? options.encodings

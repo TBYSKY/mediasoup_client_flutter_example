@@ -4,7 +4,6 @@ import 'package:example/medsoup/src/sctp_parameters.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:h264_profile_level_id/h264_profile_level_id.dart';
 
-
 String RTP_PROBATOR_MID = 'probator';
 int RTP_PROBATOR_SSRC = 1234;
 int RTP_PROBATOR_CODEC_PAYLOAD_TYPE = 127;
@@ -265,7 +264,8 @@ class Ortc {
   /// fields with default values.
   /// It throws if invalid.
   static void validateRtpCodecParameters(RtpCodecParameters? codec) {
-    final RegExp mimeTypeRegex = RegExp(r"^(audio|video)/(.+)", caseSensitive: true);
+    final RegExp mimeTypeRegex =
+        RegExp(r"^(audio|video)/(.+)", caseSensitive: true);
 
     if (codec == null) {
       throw ('codec is not an object');
@@ -470,9 +470,8 @@ class Ortc {
     // }
 
     if (orderedGiven &&
-        params.ordered == true
-        && (params.maxPacketLifeTime != null || params.maxRetransmits != null)
-    ) {
+        params.ordered == true &&
+        (params.maxPacketLifeTime != null || params.maxRetransmits != null)) {
       throw ('cannot be ordered with maxPacketLifeTime or maxRetransmits');
     } else if (!orderedGiven &
         (params.maxPacketLifeTime != null || params.maxRetransmits != null)) {
@@ -570,7 +569,8 @@ class Ortc {
     return true;
   }
 
-  static List<RtcpFeedback> reduceRtcpFeedback(RtpCodecCapability codecA, RtpCodecCapability codecB) {
+  static List<RtcpFeedback> reduceRtcpFeedback(
+      RtpCodecCapability codecA, RtpCodecCapability codecB) {
     List<RtcpFeedback> reducedRtcpFeedback = <RtcpFeedback>[];
 
     for (RtcpFeedback aFb in codecA.rtcpFeedback) {
@@ -609,7 +609,8 @@ class Ortc {
     RtpCapabilities localCaps,
     RtpCapabilities remoteCaps,
   ) {
-    final ExtendedRtpCapabilities extendedRtpCapabilities = ExtendedRtpCapabilities(
+    final ExtendedRtpCapabilities extendedRtpCapabilities =
+        ExtendedRtpCapabilities(
       codecs: [],
       headerExtensions: [],
     );
@@ -652,13 +653,15 @@ class Ortc {
 
     // Match RTX codecs.
     for (ExtendedRtpCodec extendedCodec in extendedRtpCapabilities.codecs) {
-      RtpCodecCapability? matchingLocalRtxCodec = localCaps.codecs.firstWhereOrNull(
+      RtpCodecCapability? matchingLocalRtxCodec =
+          localCaps.codecs.firstWhereOrNull(
         (RtpCodecCapability localCodec) =>
             isRtxCodec(localCodec) &&
             localCodec.parameters['apt'] == extendedCodec.localPayloadType,
       );
 
-      final RtpCodecCapability? matchingRemoteRtxCodec = remoteCaps.codecs.firstWhereOrNull(
+      final RtpCodecCapability? matchingRemoteRtxCodec =
+          remoteCaps.codecs.firstWhereOrNull(
         (RtpCodecCapability remoteCodec) =>
             isRtxCodec(remoteCodec) &&
             remoteCodec.parameters['apt'] == extendedCodec.remotePayloadType,
@@ -706,7 +709,8 @@ class Ortc {
         case RtpHeaderDirection.Inactive:
           extendedExt.direction = RtpHeaderDirection.Inactive;
           break;
-        default: break;
+        default:
+          break;
       }
 
       extendedRtpCapabilities.headerExtensions.add(extendedExt);
@@ -848,21 +852,22 @@ class Ortc {
     }
 
     // Reduce codecs' RTCP feedback. Use Transport-CC if available, REMB otherwise.
+
     if (rtpParameters.headerExtensions.any((RtpHeaderExtensionParameters ext) =>
+        ext.uri ==
+        'http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time')) {
+      for (RtpCodecParameters codec in rtpParameters.codecs) {
+        codec.rtcpFeedback = codec.rtcpFeedback
+            .where((RtcpFeedback fb) => fb.type != 'transport-cc')
+            .toList();
+      }
+    } else if (rtpParameters.headerExtensions.any((RtpHeaderExtensionParameters
+            ext) =>
         ext.uri ==
         'http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01')) {
       for (RtpCodecParameters codec in rtpParameters.codecs) {
         codec.rtcpFeedback = codec.rtcpFeedback
             .where((RtcpFeedback fb) => fb.type != 'goog-remb')
-            .toList();
-      }
-    } else if (rtpParameters.headerExtensions.any(
-        (RtpHeaderExtensionParameters ext) =>
-            ext.uri ==
-            'http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time')) {
-      for (RtpCodecParameters codec in rtpParameters.codecs) {
-        codec.rtcpFeedback = codec.rtcpFeedback
-            .where((RtcpFeedback fb) => fb.type != 'transport-cc')
             .toList();
       }
     } else {
@@ -1033,7 +1038,8 @@ class Ortc {
     RtpCodecParameters firstMediaCodec = rtpParameters.codecs.first;
 
     return extendedRtpCapabilities?.codecs.any((ExtendedRtpCodec codec) =>
-        codec.remotePayloadType == firstMediaCodec.payloadType) ?? false;
+            codec.remotePayloadType == firstMediaCodec.payloadType) ??
+        false;
   }
 }
 

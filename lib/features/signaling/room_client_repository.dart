@@ -6,6 +6,7 @@ import 'package:example/features/peers/bloc/peers_bloc.dart';
 import 'package:example/features/producers/bloc/producers_bloc.dart';
 import 'package:example/features/room/bloc/room_bloc.dart';
 import 'package:example/features/signaling/web_socket.dart';
+import 'package:example/medsoup/src/common/index.dart';
 import 'package:example/medsoup/src/consumer.dart';
 import 'package:example/medsoup/src/device.dart';
 import 'package:example/medsoup/src/producer.dart';
@@ -14,7 +15,6 @@ import 'package:example/medsoup/src/scalability_modes.dart';
 import 'package:example/medsoup/src/transport.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-
 
 class RoomClientRepository {
   final ProducersBloc producersBloc;
@@ -101,7 +101,8 @@ class RoomClientRepository {
       await _webSocket!.socket.request('closeProducer', {
         'producerId': webcamId,
       });
-    } catch (error) {} finally {
+    } catch (error) {
+    } finally {
       meBloc.add(MeSetWebcamInProgress(progress: false));
     }
   }
@@ -174,6 +175,7 @@ class RoomClientRepository {
           'minHeight': '720',
           'minFrameRate': '30',
         },
+        // 'facingMode': 'user',
         'optional': [
           {
             'sourceId': videoInputDeviceId,
@@ -193,17 +195,19 @@ class RoomClientRepository {
       return;
     }
     meBloc.add(MeSetWebcamInProgress(progress: true));
-    if (_mediasoupDevice!.canProduce(RTCRtpMediaType.RTCRtpMediaTypeVideo) == false) {
+    if (_mediasoupDevice!.canProduce(RTCRtpMediaType.RTCRtpMediaTypeVideo) ==
+        false) {
       return;
     }
     MediaStream? videoStream;
     MediaStreamTrack? track;
     try {
       // NOTE: prefer using h264
-      final videoVPVersion = kIsWeb ? 9 : 8;
+      final videoVPVersion = kIsWeb ? 9 : 9; //更换vp8 或者 vp9
       RtpCodecCapability? codec = _mediasoupDevice!.rtpCapabilities.codecs
           .firstWhere(
-              (RtpCodecCapability c) => c.mimeType.toLowerCase() == 'video/vp$videoVPVersion',
+              (RtpCodecCapability c) =>
+                  c.mimeType.toLowerCase() == 'video/vp$videoVPVersion',
               orElse: () =>
                   throw 'desired vp$videoVPVersion codec+configuration is not supported');
       videoStream = await createVideoStream();
@@ -213,10 +217,30 @@ class RoomClientRepository {
         track: track,
         codecOptions: ProducerCodecOptions(
           videoGoogleStartBitrate: 1000,
+          videoGoogleMinBitrate: 1000,
         ),
-        encodings: kIsWeb ? [
-          RtpEncodingParameters(scalabilityMode: 'S3T3_KEY', scaleResolutionDownBy: 1.0),
-        ] : [],
+        encodings: kIsWeb
+            ? [
+                RtpEncodingParameters(
+                    scalabilityMode: 'S3T3_KEY', scaleResolutionDownBy: 1.0),
+              ]
+            : [
+                RtpEncodingParameters(
+                  scalabilityMode: 'S3T3_KEY', //h264 S1T1 vp9  S3T3_KEY
+                  // scaleResolutionDownBy: 1.0,
+                  // dtx: true,
+                  // priority: Priority.High,
+                  active: true,
+                ),
+                // RtpEncodingParameters(
+                //     // scalabilityMode: 'S3T3_KEY', //h264 S1T1 vp9  S3T3_KEY
+                //     scaleResolutionDownBy: 2.0,
+                //     // dtx: true,
+                //     // priority: Priority.High,
+                //     active: true,
+                //     maxBitrate: 300000,
+                //     rid: 'q'),
+              ],
         stream: videoStream,
         appData: {
           'source': 'webcam',
@@ -232,7 +256,8 @@ class RoomClientRepository {
   }
 
   void enableMic() async {
-    if (_mediasoupDevice!.canProduce(RTCRtpMediaType.RTCRtpMediaTypeAudio) == false) {
+    if (_mediasoupDevice!.canProduce(RTCRtpMediaType.RTCRtpMediaTypeAudio) ==
+        false) {
       return;
     }
 
@@ -267,11 +292,16 @@ class RoomClientRepository {
       print(routerRtpCapabilities);
 
       final rtpCapabilities = RtpCapabilities.fromMap(routerRtpCapabilities);
-      rtpCapabilities.headerExtensions.removeWhere((he) => he.uri == 'urn:3gpp:video-orientation');
+
+      ///TODO: 不清楚为什么要移除视频方向信息
+      rtpCapabilities.headerExtensions
+          .removeWhere((he) => he.uri == 'urn:3gpp:video-orientation');
       await _mediasoupDevice!.load(routerRtpCapabilities: rtpCapabilities);
 
-      if (_mediasoupDevice!.canProduce(RTCRtpMediaType.RTCRtpMediaTypeAudio) == true ||
-          _mediasoupDevice!.canProduce(RTCRtpMediaType.RTCRtpMediaTypeVideo) == true) {
+      if (_mediasoupDevice!.canProduce(RTCRtpMediaType.RTCRtpMediaTypeAudio) ==
+              true ||
+          _mediasoupDevice!.canProduce(RTCRtpMediaType.RTCRtpMediaTypeVideo) ==
+              true) {
         _produce = true;
       }
 
@@ -361,7 +391,8 @@ class RoomClientRepository {
                     'transportId': _recvTransport!.id,
                     'dtlsParameters': data['dtlsParameters'].toMap(),
                   },
-                ).then(data['callback'])
+                )
+                .then(data['callback'])
                 .catchError(data['errback']);
           },
         );
@@ -372,7 +403,7 @@ class RoomClientRepository {
         'device': {
           'name': "Flutter",
           'flag': 'flutter',
-          'version': '0.8.0',
+          'version': '0.9.2',
         },
         'rtpCapabilities': _mediasoupDevice!.rtpCapabilities.toMap(),
         'sctpCapabilities': _mediasoupDevice!.sctpCapabilities.toMap(),
@@ -458,10 +489,12 @@ class RoomClientRepository {
     };
 
     _webSocket!.onNotification = (notification) async {
+      print("----------------通知   ${notification['method']}");
       switch (notification['method']) {
         //TODO: todo;
         case 'producerScore':
           {
+            print("----------------测试   producerScore");
             break;
           }
         case 'consumerClosed':
@@ -487,7 +520,8 @@ class RoomClientRepository {
 
         case 'newPeer':
           {
-            final Map<String, dynamic> newPeer = Map<String, dynamic>.from(notification['data']);
+            final Map<String, dynamic> newPeer =
+                Map<String, dynamic>.from(notification['data']);
             peersBloc.add(PeerAdd(newPeer: newPeer));
             break;
           }

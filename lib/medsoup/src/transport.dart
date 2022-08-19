@@ -12,7 +12,6 @@ import 'package:example/medsoup/src/rtp_parameters.dart';
 import 'package:example/medsoup/src/sctp_parameters.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-
 enum Protocol { upd, tcp }
 
 extension ProtocolExtension on Protocol {
@@ -1098,7 +1097,8 @@ class Transport extends EnhancedEventEmitter {
       throw ('not a sending Transport');
     } else if (_maxSctpMessageSize == null) {
       throw ('SCTP not enabled by remote Transport');
-    } if (listeners('connect').isEmpty && _connectionState == 'new') {
+    }
+    if (listeners('connect').isEmpty && _connectionState == 'new') {
       throw ('no "connect" listener set into this transport');
     } else if (listeners('producedata').isEmpty) {
       throw ('no "producedata" listener set into this transport');
