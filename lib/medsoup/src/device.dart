@@ -52,7 +52,7 @@ class Device {
   EnhancedEventEmitter get observer => _observer;
 
   /// Initialize the Device.
-  Future<void> load({
+  Future<void>load({
     required RtpCapabilities routerRtpCapabilities,
   }) async {
     _logger.debug(

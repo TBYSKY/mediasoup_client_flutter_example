@@ -16,7 +16,7 @@ class RemoteStream extends StatelessWidget {
           if (peer.renderer != null && peer.video != null)
             RTCVideoView(
               peer.renderer!,
-              objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+              objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
             )
           else
             Container(

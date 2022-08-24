@@ -1,7 +1,6 @@
 import 'package:example/medsoup/src/common/index.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-
 /// The RTP capabilities define what mediasoup or an endpoint can receive at
 /// media level.
 class RtpCapabilities {
@@ -622,7 +621,7 @@ class RtpCodecParameters {
   /// as 'packetization-mode' and 'profile-level-id' in H264 or 'profile-id' in
   /// VP9) are critical for codec matching.
   // CodecParameters parameters;
-  final Map<dynamic, dynamic> parameters;
+  Map<dynamic, dynamic>? parameters;
 
   /// Transport layer and codec-specific feedback messages for this codec.
   List<RtcpFeedback> rtcpFeedback;
@@ -642,7 +641,7 @@ class RtpCodecParameters {
         clockRate = data['clockRate'],
         channels = data['channels'],
         parameters = Map<dynamic, dynamic>.from(data['parameters']),
-        rtcpFeedback = data['rtcpFeedback'] != null 
+        rtcpFeedback = data['rtcpFeedback'] != null
             ? data['rtcpFeedback']
                 .map<RtcpFeedback>((e) => RtcpFeedback.fromMap(e))
                 .toList()
@@ -698,7 +697,7 @@ class RtpParameters {
   List<RtpCodecParameters> codecs;
 
   /// RTP header extensions in use.
-  List<RtpHeaderExtensionParameters> headerExtensions;
+  List<RtpHeaderExtensionParameters>? headerExtensions;
 
   /// Transmitted RTP streams and their settings.
   List<RtpEncodingParameters> encodings;
@@ -745,7 +744,7 @@ class RtpParameters {
           : List<RtpEncodingParameters>.from(old.encodings),
       headerExtensions: headerExtensions != null
           ? headerExtensions
-          : List<RtpHeaderExtensionParameters>.from(old.headerExtensions),
+          : List<RtpHeaderExtensionParameters>.from(old.headerExtensions!),
       mid: mid ?? old.mid,
       rtcp: rtcp != null
           ? rtcp
@@ -760,7 +759,7 @@ class RtpParameters {
       'mid': mid,
       'codecs':
           codecs.map((RtpCodecParameters codec) => codec.toMap()).toList(),
-      'headerExtensions': headerExtensions
+      'headerExtensions': headerExtensions!
           .map((RtpHeaderExtensionParameters rtpHeaderExtensionParameters) =>
               rtpHeaderExtensionParameters.toMap())
           .toList(),

@@ -826,10 +826,9 @@ class Transport extends EnhancedEventEmitter {
     try {
       List<RtpEncodingParameters> normalizedEncodings = [];
 
-      if (arguments.encodings != null && arguments.encodings.isEmpty) {
+      if (arguments.encodings.isEmpty) {
         normalizedEncodings = [];
-      } else if (arguments.encodings != null &&
-          arguments.encodings.isNotEmpty) {
+      } else if (arguments.encodings.isNotEmpty) {
         normalizedEncodings =
             arguments.encodings.map((RtpEncodingParameters encoding) {
           RtpEncodingParameters normalizedEncoding =

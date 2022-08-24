@@ -138,12 +138,13 @@ class RoomClientRepository {
   }
 
   void _consumerCallback(Consumer consumer, [dynamic accept]) {
-    ScalabilityMode scalabilityMode = ScalabilityMode.parse(
-        consumer.rtpParameters.encodings.first.scalabilityMode);
+    // ScalabilityMode scalabilityMode = ScalabilityMode.parse(
+    //     consumer.rtpParameters.encodings.first.scalabilityMode);
 
     accept({});
 
     peersBloc.add(PeerAddConsumer(peerId: consumer.peerId, consumer: consumer));
+    // _webSocket!.setConsumerPreferredLayers(consumer.peerId, 1, 0);
   }
 
   Future<MediaStream> createAudioStream() async {
@@ -164,28 +165,29 @@ class RoomClientRepository {
     return stream;
   }
 
-  Future<MediaStream> createVideoStream() async {
+  Future<MediaStream> createVideoStream({bool userScreen = false}) async {
     videoInputDeviceId = mediaDevicesBloc.state.selectedVideoInput!.deviceId;
     Map<String, dynamic> mediaConstraints = <String, dynamic>{
-      'audio': false,
-      'video': {
-        'mandatory': {
-          'minWidth':
-              '1280', // Provide your own width, height and frame rate here
-          'minHeight': '720',
-          'minFrameRate': '30',
-        },
-        // 'facingMode': 'user',
-        'optional': [
-          {
-            'sourceId': videoInputDeviceId,
-          },
-        ],
-      },
+      'audio': userScreen ? false : true,
+      'video': userScreen
+          ? true
+          : {
+              'mandatory': {
+                'width': '1280',
+                // Provide your own width, height and frame rate here
+                'height': '720',
+                'minFrameRate': '30',
+              },
+              'facingMode': 'user',
+              'optional': [
+                {'sourceId': videoInputDeviceId}
+              ],
+            }
     };
 
-    MediaStream stream =
-        await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    MediaStream stream = userScreen
+        ? await navigator.mediaDevices.getDisplayMedia(mediaConstraints)
+        : await navigator.mediaDevices.getUserMedia(mediaConstraints);
 
     return stream;
   }
@@ -207,13 +209,14 @@ class RoomClientRepository {
       RtpCodecCapability? codec = _mediasoupDevice!.rtpCapabilities.codecs
           .firstWhere(
               (RtpCodecCapability c) =>
-                  c.mimeType.toLowerCase() == 'video/vp$videoVPVersion',
+                  c.mimeType.toLowerCase() == 'video/h264',
               orElse: () =>
                   throw 'desired vp$videoVPVersion codec+configuration is not supported');
       videoStream = await createVideoStream();
       track = videoStream.getVideoTracks().first;
       meBloc.add(MeSetWebcamInProgress(progress: true));
       _sendTransport!.produce(
+        stream: videoStream,
         track: track,
         codecOptions: ProducerCodecOptions(
           videoGoogleStartBitrate: 1000,
@@ -226,12 +229,64 @@ class RoomClientRepository {
               ]
             : [
                 RtpEncodingParameters(
-                  scalabilityMode: 'S3T3_KEY', //h264 S1T1 vp9  S3T3_KEY
-                  // scaleResolutionDownBy: 1.0,
-                  // dtx: true,
-                  // priority: Priority.High,
+                  //h264 S1T1 vp9  S3T3_KEY
+                  // scalabilityMode: 'S1T1',
+                  rid: 'l',
+                  scaleResolutionDownBy: 4,
+                  maxBitrate: 200000,
                   active: true,
                 ),
+                RtpEncodingParameters(
+                  //h264 S1T1 vp9  S3T3_KEY
+                  // scalabilityMode: 'S1T1',
+                  rid: 'm',
+                  scaleResolutionDownBy: 2,
+                  maxBitrate: 1000000,
+                  active: true,
+                ),
+                RtpEncodingParameters(
+                  //h264 S1T1 vp9  S3T3_KEY
+                  // scalabilityMode: 'S1T1',
+                  rid: 'h',
+                  scaleResolutionDownBy: 1,
+                  maxBitrate: 5000000,
+                  active: true,
+                ),
+
+                // RtpEncodingParameters(
+                //   //h264 S1T1 vp9  S3T3_KEY
+                //   scalabilityMode: 'S1T1_KEY',
+                //   rid: 'l',
+                //   scaleResolutionDownBy: 4,
+                //   maxBitrate: 100000,
+                //   active: true,
+                // ),
+
+                // VP9 SVC
+                // RtpEncodingParameters(
+                //     scalabilityMode: 'S2T1_KEY', //h264 S1T1 vp9  S3T3_KEY
+                //     scaleResolutionDownBy: 1.0
+                // dtx: true,
+                // priority: Priority.High,
+                // active: true,
+                // ),
+                //联播
+                // RtpEncodingParameters(
+                //   scalabilityMode: 'S3T3_KEY', //h264 S1T1 vp9  S3T3_KEY
+                //   dtx: true,
+                //   // priority: Priority.High,
+                //   maxBitrate: 900000,
+                //   active: true,
+                // ),
+
+                // RtpEncodingParameters(
+                //   scalabilityMode: 'S1T1', //h264 S1T1 vp9  S3T3_KEY
+                //   // scaleResolutionDownBy: 1.0,
+                //   // dtx: true,
+                //   // priority: Priority.High,
+                //   maxBitrate: 15000,
+                //   active: true,
+                // ),
                 // RtpEncodingParameters(
                 //     // scalabilityMode: 'S3T3_KEY', //h264 S1T1 vp9  S3T3_KEY
                 //     scaleResolutionDownBy: 2.0,
@@ -241,7 +296,6 @@ class RoomClientRepository {
                 //     maxBitrate: 300000,
                 //     rid: 'q'),
               ],
-        stream: videoStream,
         appData: {
           'source': 'webcam',
         },
@@ -292,8 +346,6 @@ class RoomClientRepository {
       print(routerRtpCapabilities);
 
       final rtpCapabilities = RtpCapabilities.fromMap(routerRtpCapabilities);
-
-      ///TODO: 不清楚为什么要移除视频方向信息
       rtpCapabilities.headerExtensions
           .removeWhere((he) => he.uri == 'urn:3gpp:video-orientation');
       await _mediasoupDevice!.load(routerRtpCapabilities: rtpCapabilities);
@@ -483,6 +535,9 @@ class RoomClientRepository {
             }
             break;
           }
+        case 'newDataConsumer':
+          print('接受到消息 newDataConsumer');
+          break;
         default:
           break;
       }

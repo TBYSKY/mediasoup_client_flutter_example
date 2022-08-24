@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
                       // url: url.isEmpty
                       //     ? 'wss://${uri.host}:4443'
                       //     : 'wss://v3demo.mediasoup.org:4443',
-                      url: 'wss://192.168.0.228:4443',
+                      url: 'wss://1.190.195.26:4443',
                       roomId: 'haoxin',
                       // roomId: uri.queryParameters['roomId'] ??
                       //     uri.queryParameters['roomid'] ??

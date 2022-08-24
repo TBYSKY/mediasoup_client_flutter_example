@@ -214,7 +214,7 @@ class CommonUtils {
       switch (mimeType) {
         case 'audio/opus':
           {
-            final int? spropStereo = codec.parameters['sprop-stereo'];
+            final int? spropStereo = codec.parameters!['sprop-stereo'];
 
             if (spropStereo != null) {
               parameters['stereo'] = spropStereo > 0 ? 1 : 0;

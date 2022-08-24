@@ -310,10 +310,10 @@ class Ortc {
     //   codec.parameters = <dynamic, dynamic>{};
     // }
 
-    for (String key in codec.parameters.keys) {
-      var value = codec.parameters[key];
+    for (String key in codec.parameters!.keys) {
+      var value = codec.parameters![key];
       if (value == null) {
-        codec.parameters[key] = '';
+        codec.parameters![key] = '';
         value = '';
       }
 
@@ -358,7 +358,7 @@ class Ortc {
     //   params.headerExtensions = <RtpHeaderExtensionParameters>[];
     // }
 
-    for (RtpHeaderExtensionParameters ext in params.headerExtensions) {
+    for (RtpHeaderExtensionParameters ext in params.headerExtensions!) {
       validateRtpHeaderExtensionParameters(ext);
     }
 
@@ -848,26 +848,25 @@ class Ortc {
         parameters: {},
       );
 
-      rtpParameters.headerExtensions.add(ext);
+      rtpParameters.headerExtensions!.add(ext);
     }
 
     // Reduce codecs' RTCP feedback. Use Transport-CC if available, REMB otherwise.
-
-    if (rtpParameters.headerExtensions.any((RtpHeaderExtensionParameters ext) =>
-        ext.uri ==
-        'http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time')) {
-      for (RtpCodecParameters codec in rtpParameters.codecs) {
-        codec.rtcpFeedback = codec.rtcpFeedback
-            .where((RtcpFeedback fb) => fb.type != 'transport-cc')
-            .toList();
-      }
-    } else if (rtpParameters.headerExtensions.any((RtpHeaderExtensionParameters
-            ext) =>
+    if (rtpParameters.headerExtensions!.any((RtpHeaderExtensionParameters ext) =>
         ext.uri ==
         'http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01')) {
       for (RtpCodecParameters codec in rtpParameters.codecs) {
         codec.rtcpFeedback = codec.rtcpFeedback
             .where((RtcpFeedback fb) => fb.type != 'goog-remb')
+            .toList();
+      }
+    } else if (rtpParameters.headerExtensions!.any(
+        (RtpHeaderExtensionParameters ext) =>
+            ext.uri ==
+            'http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time')) {
+      for (RtpCodecParameters codec in rtpParameters.codecs) {
+        codec.rtcpFeedback = codec.rtcpFeedback
+            .where((RtcpFeedback fb) => fb.type != 'transport-cc')
             .toList();
       }
     } else {
@@ -1009,7 +1008,7 @@ class Ortc {
         parameters: {},
       );
 
-      rtpParameters.headerExtensions.add(ext);
+      rtpParameters.headerExtensions!.add(ext);
     }
 
     return rtpParameters;

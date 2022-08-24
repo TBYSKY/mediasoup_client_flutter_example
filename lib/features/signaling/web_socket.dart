@@ -9,16 +9,17 @@ class WebSocket {
   Function()? onFail;
   Function()? onDisconnected;
   Function()? onClose;
-  Function(dynamic request, dynamic accept, dynamic reject)? onRequest; // request, accept, reject
+  Function(dynamic request, dynamic accept, dynamic reject)?
+      onRequest; // request, accept, reject
   Function(dynamic notification)? onNotification;
 
   ProtooClient.Peer get socket => _protoo;
 
   WebSocket({required this.peerId, required this.roomId, required this.url}) {
     _protoo = ProtooClient.Peer(
-        ProtooClient.Transport(
-            '$url/?roomId=$roomId&peerId=$peerId',
-        ),
+      ProtooClient.Transport(
+        '$url/?roomId=$roomId&peerId=$peerId',
+      ),
     );
 
     _protoo.on('open', () => this.onOpen?.call());
@@ -26,10 +27,11 @@ class WebSocket {
     _protoo.on('disconnected', () => this.onClose?.call());
     _protoo.on('close', () => this.onClose?.call());
     _protoo.on(
-        'request', (request, accept, reject) => this.onRequest?.call(request, accept, reject));
+        'request',
+        (request, accept, reject) =>
+            this.onRequest?.call(request, accept, reject));
     _protoo.on('notification',
-      (request, accept, reject) => onNotification?.call(request)
-    );
+        (request, accept, reject) => onNotification?.call(request));
   }
 
   void close() {

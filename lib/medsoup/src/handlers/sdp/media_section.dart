@@ -1,5 +1,3 @@
-
-
 import 'package:example/medsoup/src/producer.dart';
 import 'package:example/medsoup/src/rtp_parameters.dart';
 import 'package:example/medsoup/src/sctp_parameters.dart';
@@ -19,11 +17,11 @@ class Rtp {
     this.encoding,
   });
 
-  Rtp.fromMap(Map data) :
-    payload = data['payload'],
-    codec = data['codec'],
-    rate = data['rate'],
-    encoding = data['encoding'];
+  Rtp.fromMap(Map data)
+      : payload = data['payload'],
+        codec = data['codec'],
+        rate = data['rate'],
+        encoding = data['encoding'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -44,9 +42,9 @@ class Fmtp {
     required this.config,
   });
 
-  Fmtp.fromMap(Map data) :
-    payload = data['payload'],
-    config = data['config'];
+  Fmtp.fromMap(Map data)
+      : payload = data['payload'],
+        config = data['config'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -60,11 +58,14 @@ class Connection {
   final int version;
   final String ip;
 
-  Connection({required this.version, required this.ip,});
+  Connection({
+    required this.version,
+    required this.ip,
+  });
 
-  Connection.fromMap(Map data) :
-    version = data['version'],
-    ip = data['ip'];
+  Connection.fromMap(Map data)
+      : version = data['version'],
+        ip = data['ip'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -87,11 +88,11 @@ class Rtcp {
     required this.ipVer,
   });
 
-  Rtcp.fromMap(Map data) :
-    port = data['port'],
-    netType = data['netType'],
-    ipVer = data['ipVer'],
-    address = data['address'];
+  Rtcp.fromMap(Map data)
+      : port = data['port'],
+        netType = data['netType'],
+        ipVer = data['ipVer'],
+        address = data['address'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -112,9 +113,9 @@ class Fingerprint {
     required this.hash,
   });
 
-  Fingerprint.fromMap(Map data) :
-    type = data['type'],
-    hash = data['hash'];
+  Fingerprint.fromMap(Map data)
+      : type = data['type'],
+        hash = data['hash'];
 
   Map<String, String> toMap() {
     return {
@@ -139,24 +140,19 @@ class Ext {
     this.encryptUri,
   });
 
-  Ext.fromMap(Map data) :
-    value = data['value'],
-    direction = data['direction'],
-    uri = data['uri'],
-    config = data['config'],
-    encryptUri = data['encrypt-uri'];
-
+  Ext.fromMap(Map data)
+      : value = data['value'],
+        direction = data['direction'],
+        uri = data['uri'],
+        config = data['config'],
+        encryptUri = data['encrypt-uri'];
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> result = {
-      if (value != null)
-      'value': value,
-      if (direction != null)
-      'direction': direction,
-      if (uri != null)
-      'uri': uri,
-      if (config != null)
-      'config': config,
+      if (value != null) 'value': value,
+      if (direction != null) 'direction': direction,
+      if (uri != null) 'uri': uri,
+      if (config != null) 'config': config,
     };
     if (encryptUri != null && encryptUri!.isNotEmpty) {
       result['encrypt-uri'] = encryptUri;
@@ -175,11 +171,10 @@ class RtcpFb {
     required this.type,
     this.subtype = '',
   });
-  RtcpFb.fromMap(Map data) :
-    payload = data['payload'],
-    type = data['type'],
-    subtype = data['subtype'] ?? '';
-
+  RtcpFb.fromMap(Map data)
+      : payload = data['payload'],
+        type = data['type'],
+        subtype = data['subtype'] ?? '';
 
   Map<String, dynamic> toMap() {
     return {
@@ -201,10 +196,10 @@ class Ssrc {
     required this.value,
   });
 
-  Ssrc.fromMap(Map data) :
-    id = data['id'],
-    attribute = data['attribute'],
-    value = data['value'];
+  Ssrc.fromMap(Map data)
+      : id = data['id'],
+        attribute = data['attribute'],
+        value = data['value'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -224,10 +219,9 @@ class SsrcGroup {
     required this.ssrcs,
   });
 
-  SsrcGroup.fromMap(Map data) :
-    semantics = data['semantics'],
-    ssrcs = data['ssrcs'];
-
+  SsrcGroup.fromMap(Map data)
+      : semantics = data['semantics'],
+        ssrcs = data['ssrcs'];
 
   Map<String, String> toMap() {
     return {
@@ -248,11 +242,10 @@ class Sctpmap {
     required this.maxMessageSize,
   });
 
-  Sctpmap.fromMap(Map data) :
-    app = data['app'],
-    sctpmanNumber = data['sctpmanNumber'],
-    maxMessageSize = data['maxMessageSize'];
-
+  Sctpmap.fromMap(Map data)
+      : app = data['app'],
+        sctpmanNumber = data['sctpmanNumber'],
+        maxMessageSize = data['maxMessageSize'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -264,7 +257,7 @@ class Sctpmap {
 }
 
 class Rid {
-  final int id;
+  final String id;
   final String direction;
   final String? params;
 
@@ -274,10 +267,10 @@ class Rid {
     this.params,
   });
 
-  Rid.fromMap(Map data) :
-    id = data['id'],
-    direction = data['direction'],
-    params = data['params'];
+  Rid.fromMap(Map data)
+      : id = data['id'],
+        direction = data['direction'],
+        params = data['params'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -295,17 +288,17 @@ class Simulcast {
   final String? list2;
 
   Simulcast({
-     this.dir1,
-     this.list1,
-     this.dir2,
-     this.list2,
+    this.dir1,
+    this.list1,
+    this.dir2,
+    this.list2,
   });
 
-  Simulcast.fromMap(Map data) :
-    dir1 = data['dir1'],
-    list1 = data['list1'],
-    dir2 = data['dir2'],
-    list2 = data['list2'];
+  Simulcast.fromMap(Map data)
+      : dir1 = data['dir1'],
+        list1 = data['list1'],
+        dir2 = data['dir2'],
+        list2 = data['list2'];
 
   Map<String, String?> toMap() {
     return {
@@ -322,8 +315,7 @@ class Simulcast_03 {
 
   Simulcast_03({required this.value});
 
-  Simulcast_03.fromMap(Map data) :
-    value = data['value'];
+  Simulcast_03.fromMap(Map data) : value = data['value'];
 
   Map<String, String> toMap() {
     return {
@@ -341,9 +333,9 @@ class RtcpFbTrrInt {
     required this.value,
   });
 
-  RtcpFbTrrInt.fromMap(Map data) :
-    payload = data['payload'],
-    value = data['value'];
+  RtcpFbTrrInt.fromMap(Map data)
+      : payload = data['payload'],
+        value = data['value'];
 
   Map<String, int> toMap() {
     return {
@@ -366,12 +358,11 @@ class Crypto {
     this.sessionConfig,
   });
 
-  Crypto.fromMap(Map data) :
-    id = data['id'],
-    suite = data['suite'],
-    config = data['config'],
-    sessionConfig = data['sessionConfig'];
-
+  Crypto.fromMap(Map data)
+      : id = data['id'],
+        suite = data['suite'],
+        config = data['config'],
+        sessionConfig = data['sessionConfig'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -392,10 +383,9 @@ class Bandwidth {
     required this.limit,
   });
 
-  Bandwidth.fromMap(Map data) :
-    type = data['type'],
-    limit = data['limit'];
-
+  Bandwidth.fromMap(Map data)
+      : type = data['type'],
+        limit = data['limit'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -420,13 +410,12 @@ class Imageattrs {
     required this.attrs2,
   });
 
-  Imageattrs.fromMap(Map data) :
-    pt = data['pt'],
-    dir1 = data['dir1'],
-    attrs1 = data['attrs1'],
-    dir2 = data['dir2'],
-    attrs2 = data['attrs2'];
-
+  Imageattrs.fromMap(Map data)
+      : pt = data['pt'],
+        dir1 = data['dir1'],
+        attrs1 = data['attrs1'],
+        dir2 = data['dir2'],
+        attrs2 = data['attrs2'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -454,12 +443,12 @@ class SourceFilter {
     required this.srcList,
   });
 
-  SourceFilter.fromMap(Map data) :
-    this.filterMode = data['filterMode'],
-    this.netType = data['netType'],
-    this.addressTypes = data['addressTypes'],
-    this.destAddress = data['destAddress'],
-    this.srcList = data['srcList'];
+  SourceFilter.fromMap(Map data)
+      : this.filterMode = data['filterMode'],
+        this.netType = data['netType'],
+        this.addressTypes = data['addressTypes'],
+        this.destAddress = data['destAddress'],
+        this.srcList = data['srcList'];
 
   Map<String, String> toMap() {
     return {
@@ -568,7 +557,9 @@ class MediaObject {
 
   MediaObject.fromMap(Map data) {
     if (data['candidates'] != null) {
-      candidates = List<IceCandidate>.from((data['candidates'] ?? []).map((candidate) => IceCandidate.fromMap(candidate)).toList());
+      candidates = List<IceCandidate>.from((data['candidates'] ?? [])
+          .map((candidate) => IceCandidate.fromMap(candidate))
+          .toList());
     }
     if (data['iceUfrag'] != null) {
       iceUfrag = data['iceUfrag'];
@@ -595,10 +586,12 @@ class MediaObject {
       direction = RtpHeaderDirectionExtension.fromString(data['direction']);
     }
     if (data['rtp'] != null) {
-      rtp = List<Rtp>.from((data['rtp'] ?? <Rtp>[]).map((r) => Rtp.fromMap(r)).toList());
+      rtp = List<Rtp>.from(
+          (data['rtp'] ?? <Rtp>[]).map((r) => Rtp.fromMap(r)).toList());
     }
     if (data['fmtp'] != null) {
-      fmtp = List<Fmtp>.from((data['fmtp'] ?? []).map((f) => Fmtp.fromMap(f)).toList());
+      fmtp = List<Fmtp>.from(
+          (data['fmtp'] ?? []).map((f) => Fmtp.fromMap(f)).toList());
     }
     if (data['type'] != null) {
       type = data['type'];
@@ -616,7 +609,8 @@ class MediaObject {
       rtcp = Rtcp.fromMap(data['rtcp']);
     }
     if (data['ext'] != null) {
-      ext = List<Ext>.from((data['ext'] ?? []).map((e) => Ext.fromMap(e)).toList());
+      ext = List<Ext>.from(
+          (data['ext'] ?? []).map((e) => Ext.fromMap(e)).toList());
     }
     if (data['msid'] != null) {
       msid = data['msid'];
@@ -625,13 +619,17 @@ class MediaObject {
       rtcpMux = data['rtcpMux'];
     }
     if (data['rtcpFb'] != null) {
-      rtcpFb = List<RtcpFb>.from((data['rtcpFb'] ?? []).map((r) => RtcpFb.fromMap(r)).toList());
+      rtcpFb = List<RtcpFb>.from(
+          (data['rtcpFb'] ?? []).map((r) => RtcpFb.fromMap(r)).toList());
     }
     if (data['ssrcs'] != null) {
-      ssrcs = List<Ssrc>.from((data['ssrcs'] ?? []).map((ssrc) => Ssrc.fromMap(ssrc)).toList());
+      ssrcs = List<Ssrc>.from(
+          (data['ssrcs'] ?? []).map((ssrc) => Ssrc.fromMap(ssrc)).toList());
     }
     if (data['ssrcGroups'] != null) {
-      ssrcGroups = List<SsrcGroup>.from((data['ssrcGroups'] ?? []).map((ssrcGroup) => SsrcGroup.fromMap(ssrcGroup)).toList());
+      ssrcGroups = List<SsrcGroup>.from((data['ssrcGroups'] ?? [])
+          .map((ssrcGroup) => SsrcGroup.fromMap(ssrcGroup))
+          .toList());
     }
     if (data['simulcast'] != null) {
       simulcast = Simulcast.fromMap(data['simulcast']);
@@ -640,9 +638,11 @@ class MediaObject {
       simulcast_03 = Simulcast_03.fromMap(data['simulcast_03']);
     }
     if (data['rids'] != null) {
-      rids = List<Rid>.from((data['rids'] ?? []).map((r) => Rid.fromMap(r)).toList());
+      rids = List<Rid>.from(
+          (data['rids'] ?? []).map((r) => Rid.fromMap(r)).toList());
     }
-    if (data['extmapAllowMixed'] != null || data['extmap-allow-mixed'] != null) {
+    if (data['extmapAllowMixed'] != null ||
+        data['extmap-allow-mixed'] != null) {
       extmapAllowMixed = true;
     }
     if (data['rtcpRsize'] != null) {
@@ -664,13 +664,17 @@ class MediaObject {
       fingerprint = Fingerprint.fromMap(data['fingerprint']);
     }
     if (data['rtcpFbTrrInt'] != null) {
-      rtcpFbTrrInt = List<RtcpFbTrrInt>.from((data['rtcpFbTrrInt'] ?? []).map((rFTI) => RtcpFbTrrInt.fromMap(data['rtcpFbTrrInt'])).toList());
+      rtcpFbTrrInt = List<RtcpFbTrrInt>.from((data['rtcpFbTrrInt'] ?? [])
+          .map((rFTI) => RtcpFbTrrInt.fromMap(data['rtcpFbTrrInt']))
+          .toList());
     }
     if (data['crypto'] != null) {
-      crypto = List<Crypto>.from((data['crypto'] ?? []).map((c) => Crypto.fromMap(c)).toList());
+      crypto = List<Crypto>.from(
+          (data['crypto'] ?? []).map((c) => Crypto.fromMap(c)).toList());
     }
     if (data['invalid'] != null) {
-      invalid = List<Invalid>.from((data['invalid'] ?? []).map((i) => Invalid.fromMap(i)).toList());
+      invalid = List<Invalid>.from(
+          (data['invalid'] ?? []).map((i) => Invalid.fromMap(i)).toList());
     }
     if (data['ptime'] != null) {
       ptime = data['ptime'];
@@ -682,7 +686,8 @@ class MediaObject {
       label = data['label'];
     }
     if (data['bandwidth'] != null) {
-      bandwidth = List<Bandwidth>.from((data['bandwidth'] ?? []).map((b) => Bandwidth.fromMap(b)).toList());
+      bandwidth = List<Bandwidth>.from(
+          (data['bandwidth'] ?? []).map((b) => Bandwidth.fromMap(b)).toList());
     }
     if (data['framerate'] != null) {
       framerate = data['framerate'];
@@ -691,7 +696,9 @@ class MediaObject {
       bundleOnly = data['bundleOnly'];
     }
     if (data['imageattrs'] != null) {
-      imageattrs = List<Imageattrs>.from((data['imageattrs'] ?? []).map((ia) => Imageattrs.fromMap(ia)).toList());
+      imageattrs = List<Imageattrs>.from((data['imageattrs'] ?? [])
+          .map((ia) => Imageattrs.fromMap(ia))
+          .toList());
     }
     if (data['sourceFilter'] != null) {
       sourceFilter = SourceFilter.fromMap(data['sourceFilter']);
@@ -704,7 +711,9 @@ class MediaObject {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> result = <String, dynamic>{};
     if (candidates != null) {
-      result['candidates'] = [candidates!.map((IceCandidate c) => c.toMap()).toList().first];
+      result['candidates'] = [
+        candidates!.map((IceCandidate c) => c.toMap()).toList().first
+      ];
     }
     if (iceUfrag != null) {
       result['iceUfrag'] = iceUfrag;
@@ -767,7 +776,8 @@ class MediaObject {
       result['ssrcs'] = ssrcs!.map((Ssrc s) => s.toMap()).toList();
     }
     if (ssrcGroups != null) {
-      result['ssrcGroups'] = ssrcGroups!.map((SsrcGroup sg) => sg.toMap()).toList();
+      result['ssrcGroups'] =
+          ssrcGroups!.map((SsrcGroup sg) => sg.toMap()).toList();
     }
     if (simulcast != null) {
       result['simulcast'] = simulcast!.toMap();
@@ -800,7 +810,8 @@ class MediaObject {
       result['fingerprint'] = fingerprint!.toMap();
     }
     if (rtcpFbTrrInt != null) {
-      result['rtcpFbTrrInt'] = rtcpFbTrrInt!.map((RtcpFbTrrInt rFTI) => rFTI.toMap()).toList();
+      result['rtcpFbTrrInt'] =
+          rtcpFbTrrInt!.map((RtcpFbTrrInt rFTI) => rFTI.toMap()).toList();
     }
     if (crypto != null) {
       result['crypto'] = crypto!.map((Crypto c) => c.toMap()).toList();
@@ -818,7 +829,8 @@ class MediaObject {
       result['label'] = label;
     }
     if (bandwidth != null) {
-      result['bandwidth'] = bandwidth!.map((Bandwidth bw) => bw.toMap()).toList();
+      result['bandwidth'] =
+          bandwidth!.map((Bandwidth bw) => bw.toMap()).toList();
     }
     if (framerate != null) {
       result['framerate'] = framerate;
@@ -827,7 +839,8 @@ class MediaObject {
       result['bundleOnly'] = bundleOnly;
     }
     if (imageattrs != null) {
-      result['imageattrs'] = imageattrs!.map((Imageattrs im) => im.toMap()).toList();
+      result['imageattrs'] =
+          imageattrs!.map((Imageattrs im) => im.toMap()).toList();
     }
     if (sourceFilter != null) {
       result['sourceFilter'] = sourceFilter!.toMap();
@@ -893,7 +906,8 @@ abstract class MediaSection {
 
   void setDtlsRole(DtlsRole role);
 
-  String? get mid => _mediaObject.mid != null ? _mediaObject.mid.toString() : null;
+  String? get mid =>
+      _mediaObject.mid != null ? _mediaObject.mid.toString() : null;
 
   bool get closed => _mediaObject.port == 0;
 
@@ -984,26 +998,28 @@ class AnswerMediaSection extends MediaSection {
             _mediaObject.rtp?.add(rtp);
 
             // CodecParameters codecParameters =
-                // CodecParameters.copy(codec.parameters);
+            // CodecParameters.copy(codec.parameters);
             Map<dynamic, dynamic> codecParameters =
-                Map<dynamic, dynamic>.of(codec.parameters);
+                Map<dynamic, dynamic>.of(codec.parameters!);
 
             if (codecOptions != null) {
               final int? opusStereo = codecOptions.opusStereo;
               final int? opusFec = codecOptions.opusFec;
               final int? opusDtx = codecOptions.opusDtx;
               final int? opusMaxPlaybackRate = codecOptions.opusMaxPlaybackRate;
-              final int? opusMaxAverageBitrate = codecOptions.opusMaxAverageBitrate;
+              final int? opusMaxAverageBitrate =
+                  codecOptions.opusMaxAverageBitrate;
               final int? opusPtime = codecOptions.opusPtime;
               final int? videoGoogleStartBitrate =
                   codecOptions.videoGoogleStartBitrate;
-              final int? videoGoogleMaxBitrate = codecOptions.videoGoogleMaxBitrate;
-              final int? videoGoogleMinBitrate = codecOptions.videoGoogleMinBitrate;
+              final int? videoGoogleMaxBitrate =
+                  codecOptions.videoGoogleMaxBitrate;
+              final int? videoGoogleMinBitrate =
+                  codecOptions.videoGoogleMinBitrate;
 
-              final RtpCodecParameters? offerCodec = offerRtpParameters?.codecs
-                  .firstWhere(
-                      (RtpCodecParameters c) =>
-                          c.payloadType == codec.payloadType,
+              final RtpCodecParameters? offerCodec =
+                  offerRtpParameters?.codecs.firstWhere(
+                (RtpCodecParameters c) => c.payloadType == codec.payloadType,
                 orElse: () => null as RtpCodecParameters,
               );
 
@@ -1011,24 +1027,29 @@ class AnswerMediaSection extends MediaSection {
                 case 'audio/opus':
                   {
                     // if (opusStereo != null) {
-                      // offerCodec.parameters['sprop-stereo'] = opusStereo ? 1 : 0;
-                      offerCodec!.parameters['sprop-stereo'] = opusStereo != null ? opusStereo : 0;
-                      // codecParameters['stereo'] = opusStereo ? 1 : 0;
-                      codecParameters['stereo'] = opusStereo != null ? opusStereo : 0;
+                    // offerCodec.parameters['sprop-stereo'] = opusStereo ? 1 : 0;
+                    offerCodec!.parameters!['sprop-stereo'] =
+                        opusStereo != null ? opusStereo : 0;
+                    // codecParameters['stereo'] = opusStereo ? 1 : 0;
+                    codecParameters['stereo'] =
+                        opusStereo != null ? opusStereo : 0;
                     // }
 
                     // if (opusFec != null) {
-                      // offerCodec.parameters['useinbandfec'] = opusFec ? 1 : 0;
-                      offerCodec.parameters['useinbandfec'] = opusFec != null ? opusFec : 0;
-                      // codecParameters['useinbandfec'] = opusFec ? 1 : 0;
-                      codecParameters['useinbandfec'] = opusFec != null ? opusFec : 0;
+                    // offerCodec.parameters['useinbandfec'] = opusFec ? 1 : 0;
+                    offerCodec.parameters!['useinbandfec'] =
+                        opusFec != null ? opusFec : 0;
+                    // codecParameters['useinbandfec'] = opusFec ? 1 : 0;
+                    codecParameters['useinbandfec'] =
+                        opusFec != null ? opusFec : 0;
                     // }
 
                     // if (opusDtx != null) {
-                      // offerCodec.parameters['usedtx'] = opusDtx ? 1 : 0;
-                      offerCodec.parameters['usedtx'] = opusDtx != null ? opusDtx : 0;
-                      // codecParameters['usedtx'] = opusDtx ? 1 : 0;
-                      codecParameters['usedtx'] = opusDtx != null ? opusDtx : 0;
+                    // offerCodec.parameters['usedtx'] = opusDtx ? 1 : 0;
+                    offerCodec.parameters!['usedtx'] =
+                        opusDtx != null ? opusDtx : 0;
+                    // codecParameters['usedtx'] = opusDtx ? 1 : 0;
+                    codecParameters['usedtx'] = opusDtx != null ? opusDtx : 0;
                     // }
 
                     if (opusMaxPlaybackRate != null) {
@@ -1036,11 +1057,12 @@ class AnswerMediaSection extends MediaSection {
                     }
 
                     if (opusMaxAverageBitrate != null) {
-                      codecParameters['maxaveragebitrate'] = opusMaxAverageBitrate;
+                      codecParameters['maxaveragebitrate'] =
+                          opusMaxAverageBitrate;
                     }
 
                     if (opusPtime != null) {
-                      offerCodec.parameters['ptime'] = opusPtime;
+                      offerCodec.parameters!['ptime'] = opusPtime;
                       codecParameters['ptime'] = opusPtime;
                     }
 
@@ -1058,11 +1080,13 @@ class AnswerMediaSection extends MediaSection {
                     }
 
                     if (videoGoogleMaxBitrate != null) {
-                      codecParameters['x-google-max-bitrate'] = videoGoogleMaxBitrate;
+                      codecParameters['x-google-max-bitrate'] =
+                          videoGoogleMaxBitrate;
                     }
 
                     if (videoGoogleMinBitrate != null) {
-                      codecParameters['x-google-min-bitrate'] = videoGoogleMinBitrate;
+                      codecParameters['x-google-min-bitrate'] =
+                          videoGoogleMinBitrate;
                     }
                     break;
                   }
@@ -1283,7 +1307,7 @@ class OfferMediaSection extends MediaSection {
               rate: codec.clockRate,
             );
 
-            if (codec.channels  != null && codec.channels! > 1) {
+            if (codec.channels != null && codec.channels! > 1) {
               rtp.encoding = codec.channels;
             }
 
@@ -1294,12 +1318,12 @@ class OfferMediaSection extends MediaSection {
               config: '',
             );
 
-            for (String key in codec.parameters.keys) {
+            for (String key in codec.parameters!.keys) {
               if (fmtp.config.isNotEmpty) {
                 fmtp.config += ';';
               }
 
-              fmtp.config += '$key=${codec.parameters[key]}';
+              fmtp.config += '$key=${codec.parameters![key]}';
             }
 
             if (fmtp.config.isNotEmpty) {

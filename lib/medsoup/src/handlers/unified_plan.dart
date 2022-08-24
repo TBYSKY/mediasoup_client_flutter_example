@@ -119,7 +119,32 @@ class UnifiedPlan extends HandlerInterface {
 
     try {
       await pc.addTransceiver(kind: RTCRtpMediaType.RTCRtpMediaTypeAudio);
-      await pc.addTransceiver(kind: RTCRtpMediaType.RTCRtpMediaTypeVideo);
+      await pc.addTransceiver(
+        kind: RTCRtpMediaType.RTCRtpMediaTypeVideo,
+        // init: RTCRtpTransceiverInit(
+        //     direction: TransceiverDirection.SendOnly,
+        //     sendEncodings: [
+        //       RTCRtpEncoding(rid: 'f', active: true),
+        //       RTCRtpEncoding(
+        //         rid: 'l',
+        //         active: true,
+        //         scaleResolutionDownBy: 4.0,
+        //         maxBitrate: 200000,
+        //       ),
+        //       RTCRtpEncoding(
+        //         rid: 'm',
+        //         active: true,
+        //         scaleResolutionDownBy: 2.0,
+        //         maxBitrate: 1000000,
+        //       ),
+        //       RTCRtpEncoding(
+        //         rid: 'h',
+        //         active: true,
+        //         scaleResolutionDownBy: 1.0,
+        //         maxBitrate: 5000000,
+        //       ),
+        //     ]),
+      );
       RTCSessionDescription offer = await pc.createOffer({});
       final parsedOffer = parse(offer.sdp!);
       SdpObject sdpObject = SdpObject.fromMap(parsedOffer);
@@ -562,13 +587,13 @@ class UnifiedPlan extends HandlerInterface {
     }
 
     // Speacial case for VP9 with SVC.
-    bool hackVp9Svc = true;
+    bool hackVp9Svc = false;
 
     ScalabilityMode layers = ScalabilityMode.parse((options.encodings.isNotEmpty
             ? options.encodings
             : [RtpEncodingParameters(scalabilityMode: '')])
         .first
-        .scalabilityMode!);
+        .scalabilityMode);
 
     if (options.encodings.length == 1 &&
         layers.spatialLayers > 1 &&
@@ -595,13 +620,13 @@ class UnifiedPlan extends HandlerInterface {
     await _pc!.setLocalDescription(offer);
 
     if (!kIsWeb) {
-      final transceivers = await _pc!.getTransceivers();
-      transceiver = transceivers.firstWhere(
-        (_transceiver) =>
-            _transceiver.sender.track?.id == options.track.id &&
-            _transceiver.sender.track?.kind == options.track.kind,
-        orElse: () => throw 'No transceiver found',
-      );
+    final transceivers = await _pc!.getTransceivers();
+    transceiver = transceivers.firstWhere(
+      (_transceiver) =>
+          _transceiver.sender.track?.id == options.track.id &&
+          _transceiver.sender.track?.kind == options.track.kind,
+      orElse: () => throw 'No transceiver found',
+    );
     }
 
     // We can now get the transceiver.mid.
