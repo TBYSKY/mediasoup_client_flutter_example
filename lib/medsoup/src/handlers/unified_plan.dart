@@ -121,29 +121,6 @@ class UnifiedPlan extends HandlerInterface {
       await pc.addTransceiver(kind: RTCRtpMediaType.RTCRtpMediaTypeAudio);
       await pc.addTransceiver(
         kind: RTCRtpMediaType.RTCRtpMediaTypeVideo,
-        // init: RTCRtpTransceiverInit(
-        //     direction: TransceiverDirection.SendOnly,
-        //     sendEncodings: [
-        //       RTCRtpEncoding(rid: 'f', active: true),
-        //       RTCRtpEncoding(
-        //         rid: 'l',
-        //         active: true,
-        //         scaleResolutionDownBy: 4.0,
-        //         maxBitrate: 200000,
-        //       ),
-        //       RTCRtpEncoding(
-        //         rid: 'm',
-        //         active: true,
-        //         scaleResolutionDownBy: 2.0,
-        //         maxBitrate: 1000000,
-        //       ),
-        //       RTCRtpEncoding(
-        //         rid: 'h',
-        //         active: true,
-        //         scaleResolutionDownBy: 1.0,
-        //         maxBitrate: 5000000,
-        //       ),
-        //     ]),
       );
       RTCSessionDescription offer = await pc.createOffer({});
       final parsedOffer = parse(offer.sdp!);
@@ -620,13 +597,13 @@ class UnifiedPlan extends HandlerInterface {
     await _pc!.setLocalDescription(offer);
 
     if (!kIsWeb) {
-    final transceivers = await _pc!.getTransceivers();
-    transceiver = transceivers.firstWhere(
-      (_transceiver) =>
-          _transceiver.sender.track?.id == options.track.id &&
-          _transceiver.sender.track?.kind == options.track.kind,
-      orElse: () => throw 'No transceiver found',
-    );
+      final transceivers = await _pc!.getTransceivers();
+      transceiver = transceivers.firstWhere(
+        (_transceiver) =>
+            _transceiver.sender.track?.id == options.track.id &&
+            _transceiver.sender.track?.kind == options.track.kind,
+        orElse: () => throw 'No transceiver found',
+      );
     }
 
     // We can now get the transceiver.mid.
@@ -675,7 +652,7 @@ class UnifiedPlan extends HandlerInterface {
             sendingRtpParameters.codecs[0].mimeType.toLowerCase() ==
                 'video/h264')) {
       for (RtpEncodingParameters encoding in sendingRtpParameters.encodings) {
-        encoding.scalabilityMode = 'S1T3';
+        encoding.scalabilityMode = 'S1T2';
       }
     }
 

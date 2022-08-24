@@ -228,28 +228,32 @@ class RoomClientRepository {
                     scalabilityMode: 'S3T3_KEY', scaleResolutionDownBy: 1.0),
               ]
             : [
+                // RtpEncodingParameters(
+                //   //h264 S1T1 vp9  S3T3_KEY
+                //   // scalabilityMode: 'S1T1',
+                //   rid: 'h',
+                //   scaleResolutionDownBy: 1,
+                //   maxBitrate: 5000000,
+                //   dtx: true,
+                //   active: true,
+                // ),
                 RtpEncodingParameters(
-                  //h264 S1T1 vp9  S3T3_KEY
-                  // scalabilityMode: 'S1T1',
-                  rid: 'l',
-                  scaleResolutionDownBy: 4,
-                  maxBitrate: 200000,
-                  active: true,
-                ),
-                RtpEncodingParameters(
-                  //h264 S1T1 vp9  S3T3_KEY
-                  // scalabilityMode: 'S1T1',
-                  rid: 'm',
-                  scaleResolutionDownBy: 2,
-                  maxBitrate: 1000000,
-                  active: true,
-                ),
-                RtpEncodingParameters(
-                  //h264 S1T1 vp9  S3T3_KEY
-                  // scalabilityMode: 'S1T1',
-                  rid: 'h',
                   scaleResolutionDownBy: 1,
-                  maxBitrate: 5000000,
+                  // maxBitrate: 1000000,
+                  minBitrate: 756000,
+
+                  dtx: false,
+                  active: true,
+                ),
+                RtpEncodingParameters(
+                  //h264 S1T1 vp9  S3T3_KEY
+                  // scalabilityMode: 'S1T1',
+
+                  scaleResolutionDownBy: 2,
+
+                  maxBitrate: 756000,
+                  minBitrate: 477557,
+                  dtx: false,
                   active: true,
                 ),
 
