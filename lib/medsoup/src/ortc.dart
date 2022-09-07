@@ -23,7 +23,7 @@ class Ortc {
     }
 
     // parameter is optional. If unset set it to an empty string.
-    if (fb.parameter == null || fb.parameter.isEmpty == true) {
+    if (fb.parameter == null || !(fb.parameter is String)) {
       fb.parameter = '';
     }
   }

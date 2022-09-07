@@ -645,28 +645,39 @@ class PlanB extends HandlerInterface {
   }
 
   @override
-  Future<void> stopReceiving(String localId) async {
+  Future<void> stopReceiving(List<String> localIds) async {
     _assertRecvDirection();
 
-    _logger.debug('stopReceiving() [localId:$localId]');
+    // _logger.debug('stopReceiving() [localId:$localId]');
 
-    RtpParameters rtpParameters =
-        _mapRecvLocalIdInfo[localId]!['rtpParameters'];
-    String mid = _mapRecvLocalIdInfo[localId]!['mid'];
+    // RtpParameters rtpParameters =
+    //     _mapRecvLocalIdInfo[localId]!['rtpParameters'];
+    // String mid = _mapRecvLocalIdInfo[localId]!['mid'];
 
-    // Remote from the map.
-    _mapRecvLocalIdInfo.remove(localId);
+    // // Remote from the map.
+    // _mapRecvLocalIdInfo.remove(localId);
 
-    _remoteSdp.planBStopReceiving(mid, rtpParameters);
+    // _remoteSdp.planBStopReceiving(mid, rtpParameters);
 
-    RTCSessionDescription offer =
-        RTCSessionDescription(_remoteSdp.getSdp(), 'offer');
+    // RTCSessionDescription offer =
+    //     RTCSessionDescription(_remoteSdp.getSdp(), 'offer');
 
-    _logger.debug(
-        'stopReceiving() | calling pc.setRemoteDescription() [offer:${offer.toMap()}]');
+    // _logger.debug(
+    //     'stopReceiving() | calling pc.setRemoteDescription() [offer:${offer.toMap()}]');
 
-    await _pc!.setRemoteDescription(offer);
+    // await _pc!.setRemoteDescription(offer);
   }
+
+  @override
+  Future<void> pauseSending(String localId) async {}
+  @override
+  Future<void> resumeSending(String localId) async {}
+
+  @override
+  Future<void> pauseReceiving(List<String> localIds) async {}
+
+  @override
+  Future<void> resumeReceiving(List<String> localIds) async {}
 
   @override
   Future<void> stopSending(String localId) async {

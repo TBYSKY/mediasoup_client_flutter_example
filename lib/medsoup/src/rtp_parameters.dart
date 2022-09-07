@@ -78,6 +78,7 @@ extension RtpHeaderDirectionExtension on RtpHeaderDirection {
     RtpHeaderDirection.Inactive: 'inactive',
   };
 
+
   static RtpHeaderDirection fromString(String type) => types[type]!;
 
   String get value => values[this]!;

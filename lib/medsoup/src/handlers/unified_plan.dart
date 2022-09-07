@@ -353,7 +353,8 @@ class UnifiedPlan extends HandlerInterface {
     }
 
     await transceiver.sender.replaceTrack(options.track);
-    _mapMidTransceiver.remove(options.localId);
+    //todo:不清楚是否需要删除
+    // _mapMidTransceiver.remove(options.localId);
   }
 
   @override
@@ -821,18 +822,17 @@ class UnifiedPlan extends HandlerInterface {
   }
 
   @override
-  Future<void> stopReceiving(String localId) async {
+  Future<void> stopReceiving(List<String> localIds) async {
     _assertRecvDirection();
 
-    _logger.debug('stopReceiving() [localId:$localId');
-
-    RTCRtpTransceiver? transceiver = _mapMidTransceiver[localId];
-
-    if (transceiver == null) {
-      throw ('associated RTCRtpTransceiveer not found');
+    for (var localId in localIds) {
+      _logger.debug('stopReceiving() [localId:$localId');
+      RTCRtpTransceiver? transceiver = _mapMidTransceiver[localId];
+      if (transceiver == null) {
+        throw ('associated RTCRtpTransceiveer not found');
+      }
+      _remoteSdp.closeMediaSection(transceiver.mid);
     }
-
-    _remoteSdp.closeMediaSection(transceiver.mid);
 
     RTCSessionDescription offer =
         RTCSessionDescription(_remoteSdp.getSdp(), 'offer');
@@ -848,7 +848,74 @@ class UnifiedPlan extends HandlerInterface {
         'stopReceiving() | calling pc.setLocalDescription() [answer:${answer.toMap()}');
 
     await _pc!.setLocalDescription(answer);
-    _mapMidTransceiver.remove(localId);
+
+    for (var localId in localIds) {
+      _mapMidTransceiver.remove(localId);
+    }
+  }
+
+  @override
+  Future<void> pauseReceiving(List<String> localIds) async {
+    _assertRecvDirection();
+
+    for (var localId in localIds) {
+      _logger.debug('pauseReceiving() [localId:$localId');
+
+      RTCRtpTransceiver? transceiver = _mapMidTransceiver[localId];
+
+      if (transceiver == null) {
+        throw ('associated RTCRtpTransceiveer not found');
+      }
+
+      transceiver.setDirection(TransceiverDirection.Inactive);
+    }
+
+    RTCSessionDescription offer =
+        RTCSessionDescription(_remoteSdp.getSdp(), 'offer');
+
+    _logger.debug(
+        'pauseReceiving() | calling pc.setRemoteDescription() [offer:${offer.toMap()}');
+
+    await _pc!.setRemoteDescription(offer);
+
+    RTCSessionDescription answer = await _pc!.createAnswer({});
+
+    _logger.debug(
+        'pauseReceiving() | calling pc.setLocalDescription() [answer:${answer.toMap()}');
+
+    await _pc!.setLocalDescription(answer);
+  }
+
+  @override
+  Future<void> resumeReceiving(List<String> localIds) async {
+    _assertRecvDirection();
+
+    for (var localId in localIds) {
+      _logger.debug('resumeReceiving() [localId:$localId');
+
+      RTCRtpTransceiver? transceiver = _mapMidTransceiver[localId];
+
+      if (transceiver == null) {
+        throw ('associated RTCRtpTransceiveer not found');
+      }
+
+      transceiver.setDirection(TransceiverDirection.RecvOnly);
+    }
+
+    RTCSessionDescription offer =
+        RTCSessionDescription(_remoteSdp.getSdp(), 'offer');
+
+    _logger.debug(
+        'resumeReceiving() | calling pc.setRemoteDescription() [offer:${offer.toMap()}');
+
+    await _pc!.setRemoteDescription(offer);
+
+    RTCSessionDescription answer = await _pc!.createAnswer({});
+
+    _logger.debug(
+        'resumeReceiving() | calling pc.setLocalDescription() [answer:${answer.toMap()}');
+
+    await _pc!.setLocalDescription(answer);
   }
 
   @override
@@ -863,7 +930,7 @@ class UnifiedPlan extends HandlerInterface {
       throw ('associated RTCRtpTransceiver not found');
     }
 
-    // await transceiver.sender.replaceTrack(null);
+    await transceiver.sender.replaceTrack(null);
     await _pc!.removeTrack(transceiver.sender);
     _remoteSdp.closeMediaSection(transceiver.mid);
 
@@ -882,6 +949,46 @@ class UnifiedPlan extends HandlerInterface {
 
     await _pc!.setRemoteDescription(answer);
     _mapMidTransceiver.remove(localId);
+  }
+
+  @override
+  Future<void> pauseSending(String localId) async {
+    _assertSendRirection();
+    _logger.debug('pauseSending() [localId:$localId]');
+    RTCRtpTransceiver? transceiver = _mapMidTransceiver[localId];
+    if (transceiver == null) {
+      throw ('associated RTCRtpTransceiver not found');
+    }
+    transceiver.setDirection(TransceiverDirection.Inactive);
+    RTCSessionDescription offer = await _pc!.createOffer({});
+    _logger.debug(
+        'pauseSending() | calling pc.setLocalDescription() [offer:${offer.toMap()}');
+    await _pc!.setLocalDescription(offer);
+    RTCSessionDescription answer =
+        RTCSessionDescription(_remoteSdp.getSdp(), 'answer');
+    _logger.debug(
+        'pauseSending() | calling pc.setRemoteDescription() [answer:${answer.toMap()}');
+    await _pc!.setRemoteDescription(answer);
+  }
+
+  @override
+  Future<void> resumeSending(String localId) async {
+    _assertSendRirection();
+    _logger.debug('resumeSending() [localId:$localId]');
+    RTCRtpTransceiver? transceiver = _mapMidTransceiver[localId];
+    if (transceiver == null) {
+      throw ('associated RTCRtpTransceiver not found');
+    }
+    transceiver.setDirection(TransceiverDirection.SendOnly);
+    RTCSessionDescription offer = await _pc!.createOffer({});
+    _logger.debug(
+        'resumeSending() | calling pc.setLocalDescription() [offer:${offer.toMap()}');
+    await _pc!.setLocalDescription(offer);
+    RTCSessionDescription answer =
+        RTCSessionDescription(_remoteSdp.getSdp(), 'answer');
+    _logger.debug(
+        'resumeSending() | calling pc.setRemoteDescription() [answer:${answer.toMap()}');
+    await _pc!.setRemoteDescription(answer);
   }
 
   @override

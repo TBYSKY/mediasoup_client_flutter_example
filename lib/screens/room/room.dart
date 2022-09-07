@@ -20,7 +20,7 @@ class Room extends StatefulWidget {
 }
 
 class _RoomState extends State<Room> {
-  bool show = true;
+  bool show = false;
 
   void toggle() {
     setState(() {

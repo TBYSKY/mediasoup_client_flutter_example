@@ -1,3 +1,10 @@
+/*
+ * @Author: Beoyan
+ * @Date: 2022-08-12 15:14:44
+ * @LastEditTime: 2022-09-06 16:00:15
+ * @LastEditors: Beoyan
+ * @Description: 
+ */
 import 'package:protoo_client/protoo_client.dart' as ProtooClient;
 
 class WebSocket {
@@ -32,6 +39,11 @@ class WebSocket {
             this.onRequest?.call(request, accept, reject));
     _protoo.on('notification',
         (request, accept, reject) => onNotification?.call(request));
+  }
+
+  setConsumerPreferredLayers(id, s, l) {
+    _protoo.request("setConsumerPreferredLayers",
+        {"consumerId": id, "spatialLayer": s, "temporalLayer": l});
   }
 
   void close() {

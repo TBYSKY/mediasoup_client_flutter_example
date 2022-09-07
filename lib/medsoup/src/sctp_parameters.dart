@@ -1,6 +1,3 @@
-
-
-
 import 'package:flutter/scheduler.dart';
 
 class NumSctpStreams {
@@ -108,10 +105,7 @@ class SctpStreamParameters {
 	 * be retransmitted.
 	 */
   final int? maxRetransmits;
-  /*
-	 * DataChannel priority.
-	 */
-  final Priority? priority;
+
   /*
 	 * A label which can be used to distinguish this DataChannel from remote_stream.
 	 */
@@ -126,7 +120,6 @@ class SctpStreamParameters {
     this.ordered,
     this.maxPacketLifeTime,
     this.maxRetransmits,
-    this.priority,
     this.label,
     this.protocol,
   });
@@ -137,7 +130,6 @@ class SctpStreamParameters {
       ordered: old.ordered,
       maxPacketLifeTime: old.maxPacketLifeTime,
       maxRetransmits: old.maxRetransmits,
-      priority: old.priority,
       label: old.label,
       protocol: old.protocol,
     );
@@ -149,10 +141,16 @@ class SctpStreamParameters {
       'ordered': ordered,
       'maxPacketLifeTime': maxPacketLifeTime,
       'maxRetransmits': maxRetransmits,
-      'priority': priority?.value,
       'label': label,
       'protocol': protocol,
     };
   }
-}
 
+  static SctpStreamParameters fromMap(Map data) {
+    return SctpStreamParameters(
+      maxRetransmits: data['maxRetransmits'],
+      ordered: data['ordered'],
+      streamId: data['streamId'],
+    );
+  }
+}

@@ -871,7 +871,10 @@ abstract class MediaSection {
     }
 
     if (iceCandidates != null) {
+      _mediaObject.candidates = [];
       _mediaObject.candidates = List<IceCandidate>.of(iceCandidates);
+      this._mediaObject.endOfCandidates = 'end-of-candidates';
+      this._mediaObject.iceOptions = 'renomination';
     }
 
     if (dtlsParameters != null) {
@@ -888,7 +891,7 @@ abstract class MediaSection {
           .toList());
     }
 
-    _planB = data['planB'] == true;
+    _planB = data['planB'] == false;
 
     _mediaObject = MediaObject(
       candidates: iceCandidates,
@@ -897,19 +900,19 @@ abstract class MediaSection {
     );
   }
 
-  void setIceParameters(IceParameters iceParameters) {
-    _mediaObject.iceUfrag = iceParameters.usernameFragment;
-    _mediaObject.icePwd = iceParameters.password;
-  }
-
-  MediaObject get getObject => _mediaObject;
-
   void setDtlsRole(DtlsRole role);
 
   String? get mid =>
       _mediaObject.mid != null ? _mediaObject.mid.toString() : null;
 
   bool get closed => _mediaObject.port == 0;
+
+  MediaObject get getObject => _mediaObject;
+
+  void setIceParameters(IceParameters iceParameters) {
+    _mediaObject.iceUfrag = iceParameters.usernameFragment;
+    _mediaObject.icePwd = iceParameters.password;
+  }
 
   void disable() {
     _mediaObject.direction = RtpHeaderDirection.Inactive;
@@ -978,8 +981,7 @@ class AnswerMediaSection extends MediaSection {
       case 'audio':
       case 'video':
         {
-          _mediaObject.direction =
-              RtpHeaderDirectionExtension.fromString('recvonly');
+          _mediaObject.direction = RtpHeaderDirection.RecvOnly;
           _mediaObject.rtp = <Rtp>[];
           _mediaObject.rtcpFb = <RtcpFb>[];
           _mediaObject.fmtp = <Fmtp>[];
@@ -1026,30 +1028,46 @@ class AnswerMediaSection extends MediaSection {
               switch (codec.mimeType.toLowerCase()) {
                 case 'audio/opus':
                   {
-                    // if (opusStereo != null) {
-                    // offerCodec.parameters['sprop-stereo'] = opusStereo ? 1 : 0;
-                    offerCodec!.parameters!['sprop-stereo'] =
-                        opusStereo != null ? opusStereo : 0;
+                    if (opusStereo != null) {
+                      offerCodec!.parameters!['sprop-stereo'] =
+                          opusStereo != 0 ? 1 : 0;
+                      codecParameters['stereo'] = opusStereo != 0 ? 1 : 0;
+                    }
+
+                    if (opusFec != null) {
+                      offerCodec!.parameters!['useinbandfec'] =
+                          opusFec != 0 ? 1 : 0;
+                      // codecParameters['useinbandfec'] = opusFec ? 1 : 0;
+                      codecParameters['useinbandfec'] = opusFec != 0 ? 1 : 0;
+                    }
+
+                    if (opusDtx != null) {
+                      offerCodec!.parameters!['usedtx'] = opusDtx != 0 ? 1 : 0;
+                      // codecParameters['useinbandfec'] = opusFec ? 1 : 0;
+                      codecParameters['usedtx'] = opusDtx != 0 ? 1 : 0;
+                    }
+
+                    // offerCodec!.parameters!['sprop-stereo'] =
+                    //     opusStereo != null ? opusStereo : 0;
                     // codecParameters['stereo'] = opusStereo ? 1 : 0;
-                    codecParameters['stereo'] =
-                        opusStereo != null ? opusStereo : 0;
+
                     // }
 
                     // if (opusFec != null) {
                     // offerCodec.parameters['useinbandfec'] = opusFec ? 1 : 0;
-                    offerCodec.parameters!['useinbandfec'] =
-                        opusFec != null ? opusFec : 0;
-                    // codecParameters['useinbandfec'] = opusFec ? 1 : 0;
-                    codecParameters['useinbandfec'] =
-                        opusFec != null ? opusFec : 0;
+                    // offerCodec.parameters!['useinbandfec'] =
+                    //     opusFec != null ? opusFec : 0;
+                    // // codecParameters['useinbandfec'] = opusFec ? 1 : 0;
+                    // codecParameters['useinbandfec'] =
+                    //     opusFec != null ? opusFec : 0;
                     // }
 
                     // if (opusDtx != null) {
                     // offerCodec.parameters['usedtx'] = opusDtx ? 1 : 0;
-                    offerCodec.parameters!['usedtx'] =
-                        opusDtx != null ? opusDtx : 0;
-                    // codecParameters['usedtx'] = opusDtx ? 1 : 0;
-                    codecParameters['usedtx'] = opusDtx != null ? opusDtx : 0;
+                    // offerCodec.parameters!['usedtx'] =
+                    //     opusDtx != null ? opusDtx : 0;
+                    // // codecParameters['usedtx'] = opusDtx ? 1 : 0;
+                    // codecParameters['usedtx'] = opusDtx != null ? opusDtx : 0;
                     // }
 
                     if (opusMaxPlaybackRate != null) {
@@ -1062,7 +1080,7 @@ class AnswerMediaSection extends MediaSection {
                     }
 
                     if (opusPtime != null) {
-                      offerCodec.parameters!['ptime'] = opusPtime;
+                      offerCodec!.parameters!['ptime'] = opusPtime;
                       codecParameters['ptime'] = opusPtime;
                     }
 
@@ -1290,8 +1308,7 @@ class OfferMediaSection extends MediaSection {
       case 'audio':
       case 'video':
         {
-          _mediaObject.direction =
-              RtpHeaderDirectionExtension.fromString('sendonly');
+          _mediaObject.direction = RtpHeaderDirection.SendOnly;
           _mediaObject.rtp = <Rtp>[];
           _mediaObject.rtcpFb = <RtcpFb>[];
           _mediaObject.fmtp = <Fmtp>[];
@@ -1433,6 +1450,7 @@ class OfferMediaSection extends MediaSection {
 
   OfferMediaSection.fromMap(Map data) : super.fromMap(data);
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   @override
   void setDtlsRole(DtlsRole role) {
     // Always 'actpass'. ╾━╤デ╦︻(▀̿Ĺ̯▀̿ ̿)

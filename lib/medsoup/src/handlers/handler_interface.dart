@@ -6,7 +6,6 @@ import 'package:example/medsoup/src/sctp_parameters.dart';
 import 'package:example/medsoup/src/transport.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-
 class SCTP_NUM_STREAMS {
   static const int OS = 1024;
   static const int MIS = 1024;
@@ -238,15 +237,15 @@ abstract class HandlerInterface extends EnhancedEventEmitter {
   String get name;
   Future<void> close();
   Future<RtpCapabilities> getNativeRtpCapabilities();
-  // Future<SctpCapabilities> getNativeSctpCapabilities();
   SctpCapabilities getNativeSctpCapabilities();
   void run({required HandlerRunOptions options});
   Future<void> updateIceServers(List<RTCIceServer> iceServers);
   Future<void> restartIce(IceParameters iceParameters);
-  // TODO: RTCStatsReport
   Future<List<StatsReport>> getTransportStats();
   Future<HandlerSendResult> send(HandlerSendOptions options);
   Future<void> stopSending(String localId);
+  Future<void> pauseSending(String localId);
+  Future<void> resumeSending(String localId);
   Future<void> replaceTrack(ReplaceTrackOptions options);
   Future<void> setMaxSpatialLayer(SetMaxSpatialLayerOptions options);
   Future<void> setRtpEncodingParameters(
@@ -255,9 +254,9 @@ abstract class HandlerInterface extends EnhancedEventEmitter {
   Future<HandlerSendDataChannelResult> sendDataChannel(
       SendDataChannelArguments options);
   Future<HandlerReceiveResult> receive(HandlerReceiveOptions options);
-  Future<void> stopReceiving(
-    String localId,
-  );
+  Future<void> stopReceiving(List<String> localIds);
+  Future<void> pauseReceiving(List<String> localIds);
+  Future<void> resumeReceiving(List<String> localIds);
   Future<List<StatsReport>> getReceiverStats(String localId);
   Future<HandlerReceiveDataChannelResult> receiveDataChannel(
     HandlerReceiveDataChannelOptions options,

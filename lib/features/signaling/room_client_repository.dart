@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:example/features/me/bloc/me_bloc.dart';
 import 'package:example/features/media_devices/bloc/media_devices_bloc.dart';
@@ -8,13 +9,17 @@ import 'package:example/features/room/bloc/room_bloc.dart';
 import 'package:example/features/signaling/web_socket.dart';
 import 'package:example/medsoup/src/common/index.dart';
 import 'package:example/medsoup/src/consumer.dart';
+import 'package:example/medsoup/src/data_consumer.dart';
 import 'package:example/medsoup/src/device.dart';
 import 'package:example/medsoup/src/producer.dart';
 import 'package:example/medsoup/src/rtp_parameters.dart';
 import 'package:example/medsoup/src/scalability_modes.dart';
+import 'package:example/medsoup/src/sctp_parameters.dart';
 import 'package:example/medsoup/src/transport.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class RoomClientRepository {
   final ProducersBloc producersBloc;
@@ -144,7 +149,41 @@ class RoomClientRepository {
     accept({});
 
     peersBloc.add(PeerAddConsumer(peerId: consumer.peerId, consumer: consumer));
-    // _webSocket!.setConsumerPreferredLayers(consumer.peerId, 1, 0);
+  }
+
+  //接收消息通道
+  void _dataConsumerCallback(DataConsumer dataConsumer, [dynamic accept]) {
+    accept({});
+
+    dataConsumer.dataChannel.onMessage = (data) {
+      print(data);
+      Fluttertoast.showToast(
+          msg: data.text,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    };
+    // dataConsumer.on('message', (message) {
+    //   switch (dataConsumer.label) {
+    //     case 'chat':
+    //       print(message);
+    //       RTCDataChannelMessage dataChannelMessage = message["data"];
+
+    //       dataChannelMessage.text;
+    //       break;
+    //     case 'bot':
+    //       break;
+    //     default:
+    //   }
+    // });
+  }
+
+  //设置当前消费者的时间层空间层
+  Future<void> setConsumerPreferredLayers(consumerid, s, l) async {
+    _webSocket!.setConsumerPreferredLayers(consumerid, s, l);
   }
 
   Future<MediaStream> createAudioStream() async {
@@ -208,8 +247,7 @@ class RoomClientRepository {
       final videoVPVersion = kIsWeb ? 9 : 9; //更换vp8 或者 vp9
       RtpCodecCapability? codec = _mediasoupDevice!.rtpCapabilities.codecs
           .firstWhere(
-              (RtpCodecCapability c) =>
-                  c.mimeType.toLowerCase() == 'video/h264',
+              (RtpCodecCapability c) => c.mimeType.toLowerCase() == 'video/vp9',
               orElse: () =>
                   throw 'desired vp$videoVPVersion codec+configuration is not supported');
       videoStream = await createVideoStream();
@@ -237,25 +275,25 @@ class RoomClientRepository {
                 //   dtx: true,
                 //   active: true,
                 // ),
-                RtpEncodingParameters(
-                  scaleResolutionDownBy: 1,
-                  // maxBitrate: 1000000,
-                  minBitrate: 756000,
+                // RtpEncodingParameters(
+                //   scaleResolutionDownBy: 1,
+                //   // maxBitrate: 1000000,
+                //   minBitrate: 756000,
 
-                  dtx: false,
-                  active: true,
-                ),
-                RtpEncodingParameters(
-                  //h264 S1T1 vp9  S3T3_KEY
-                  // scalabilityMode: 'S1T1',
+                //   dtx: false,
+                //   active: true,
+                // ),
+                // RtpEncodingParameters(
+                //   //h264 S1T1 vp9  S3T3_KEY
+                //   // scalabilityMode: 'S1T1',
 
-                  scaleResolutionDownBy: 2,
+                //   scaleResolutionDownBy: 2,
 
-                  maxBitrate: 756000,
-                  minBitrate: 477557,
-                  dtx: false,
-                  active: true,
-                ),
+                //   maxBitrate: 756000,
+                //   minBitrate: 477557,
+                //   dtx: false,
+                //   active: true,
+                // ),
 
                 // RtpEncodingParameters(
                 //   //h264 S1T1 vp9  S3T3_KEY
@@ -267,13 +305,13 @@ class RoomClientRepository {
                 // ),
 
                 // VP9 SVC
-                // RtpEncodingParameters(
-                //     scalabilityMode: 'S2T1_KEY', //h264 S1T1 vp9  S3T3_KEY
-                //     scaleResolutionDownBy: 1.0
-                // dtx: true,
-                // priority: Priority.High,
-                // active: true,
-                // ),
+                RtpEncodingParameters(
+                  scalabilityMode: 'S2T3', //h264 S1T1 vp9  S3T3_KEY
+                  // scaleResolutionDownBy: 1.0,
+                  dtx: true,
+                  // priority: Priority.High,
+                  active: true,
+                ),
                 //联播
                 // RtpEncodingParameters(
                 //   scalabilityMode: 'S3T3_KEY', //h264 S1T1 vp9  S3T3_KEY
@@ -435,6 +473,7 @@ class RoomClientRepository {
         _recvTransport = _mediasoupDevice!.createRecvTransportFromMap(
           transportInfo,
           consumerCallback: _consumerCallback,
+          dataConsumerCallback: _dataConsumerCallback,
         );
 
         _recvTransport!.on(
@@ -541,6 +580,15 @@ class RoomClientRepository {
           }
         case 'newDataConsumer':
           print('接受到消息 newDataConsumer');
+          _recvTransport!.consumeData(
+              id: request['data']['id'],
+              dataProducerId: request['data']['dataProducerId'],
+              sctpStreamParameters: SctpStreamParameters.fromMap(
+                  request['data']['sctpStreamParameters']),
+              label: request['data']['label'],
+              appData: request['data']['appData'],
+              peerId: request['data']['peerId'],
+              accept: accept);
           break;
         default:
           break;
@@ -551,9 +599,18 @@ class RoomClientRepository {
       print("----------------通知   ${notification['method']}");
       switch (notification['method']) {
         //TODO: todo;
-        case 'producerScore':
+        case 'producerScore': //生产者平分变化
           {
-            print("----------------测试   producerScore");
+            String consumerId = notification['data']['producerId'];
+            List score = notification['data']['score'];
+            print("----------------测试   producerScore : ${score.toString()}");
+            break;
+          }
+        case 'consumerScore': //消费者平分变化
+          {
+            String consumerId = notification['data']['consumerId'];
+            Map score = notification['data']['score'];
+            print("----------------测试   consumerScore : ${score.toString()}");
             break;
           }
         case 'consumerClosed':
@@ -589,6 +646,22 @@ class RoomClientRepository {
           {
             String peerId = notification['data']['peerId'];
             peersBloc.add(PeerRemove(peerId: peerId));
+            break;
+          }
+        case 'consumerLayersChanged': //消费者状态发生改变
+          {
+            String consumerId = notification['data']["consumerId"];
+            int spatialLayer = notification['data']["spatialLayer"];
+            int temporalLayer = notification['data']["temporalLayer"];
+            log("consumerLayersChanged---------consumerId：$consumerId -----spatialLayer : $spatialLayer -----temporalLayer : $temporalLayer");
+            break;
+          }
+        case 'peerDisplayNameChanged': //名字改变
+          {
+            String peerId = notification['data']["peerId"];
+            String displayName = notification['data']["displayName"];
+            String oldDisplayName = notification['data']["oldDisplayName"];
+            log("peerDisplayNameChanged---------consumerId：$peerId -----displayName : $displayName -----oldDisplayName : $oldDisplayName");
             break;
           }
 

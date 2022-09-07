@@ -51,6 +51,8 @@ class DataConsumer extends EnhancedEventEmitter {
   /// Peer id.
   final String? peerId;
 
+  final String? label;
+
   /// @emits transportclose
   /// @emits open
   /// @emits error - (error: Error)
@@ -64,6 +66,7 @@ class DataConsumer extends EnhancedEventEmitter {
       required this.sctpStreamParameters,
       this.appData = const <String, dynamic>{},
       this.closed = false,
+      this.label,
       this.peerId})
       : observer = EnhancedEventEmitter(),
         super() {

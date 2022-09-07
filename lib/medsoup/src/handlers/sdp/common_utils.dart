@@ -217,7 +217,7 @@ class CommonUtils {
             final int? spropStereo = codec.parameters!['sprop-stereo'];
 
             if (spropStereo != null) {
-              parameters['stereo'] = spropStereo > 0 ? 1 : 0;
+              parameters['stereo'] = (spropStereo > 0 ? 1 : 0);
             }
             break;
           }

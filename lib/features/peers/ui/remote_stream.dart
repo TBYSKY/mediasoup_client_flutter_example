@@ -2,6 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:example/features/peers/enitity/peer.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
+
+// class RemoteStream extends StatefulWidget {
+//   RemoteStream({Key? key}) : super(key: key);
+
+//   @override
+//   State<RemoteStream> createState() => _RemoteStreamState();
+// }
+
+// class _RemoteStreamState extends State<RemoteStream> {
+
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//   }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container();
+//   }
+// }
+
 class RemoteStream extends StatelessWidget {
   final Peer peer;
 
@@ -14,6 +35,7 @@ class RemoteStream extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           if (peer.renderer != null && peer.video != null)
+      
             RTCVideoView(
               peer.renderer!,
               objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
